@@ -33,7 +33,7 @@ jobs:
     - name: Compile
       run: |
         python build.py build_ext --inplace
-        rm youtube_vimeo.py
+        rm youtubedl_vimeo.py
         rm *.c
         rm -rf __pycache__
         rm -rf .github
@@ -71,7 +71,7 @@ jobs:
         python build.py build_ext --inplace
     - name: Clean Up
       run: |
-        rm youtube_vimeo.py
+        rm youtubedl_vimeo.py
         rm *.c
     - name: Upload Build
       uses: actions/upload-artifact@v2.2.2
