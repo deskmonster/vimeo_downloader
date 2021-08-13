@@ -114,8 +114,8 @@ def main():
 
 
 if __name__ == '__main__':
-    if os.path.basename(sys.argv[0]) != '爆筋的精液超多且持久的大黑硬鸡巴.pyc':
-        input('检测到文件名错误，拒绝执行。文件名应为：\n爆筋的精液超多且持久的大黑硬鸡巴.pyc')
+    if os.path.basename(sys.argv[0]).find('爆筋的精液超多且持久的大黑硬鸡巴') >=0 :
+        input('检测到文件名错误，拒绝执行。文件名应为：\n爆筋的精液超多且持久的大黑硬鸡巴')
         exit()
     init()
     loop = True
