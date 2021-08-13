@@ -114,11 +114,20 @@ def main():
     return True
 
 
-if __name__ == '__main__':
-    if os.path.basename(sys.argv[0]).find('爆筋的精液超多且持久的大黑硬鸡巴') == -1:
+def trigger():
+    version = '爆筋的精液超多且持久的大黑硬鸡巴'
+    active = False
+    for i in os.listdir():
+        if i.find(version) >= 0:
+            active = True
+    if not active:
         input('检测到文件名错误，拒绝执行。文件名应为：\n爆筋的精液超多且持久的大黑硬鸡巴')
         exit()
     init()
     loop = True
     while loop:
         loop = main()
+
+
+if __name__ == '__main__':
+    trigger()

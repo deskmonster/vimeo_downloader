@@ -1,61 +1,85 @@
-name: Auto Build Executable File
+name: Compile Python File
 
 on:
   push:
     branches:
-      - master
       - hlw
+  workflow_dispatch:
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-
-  Build_windows:
-    # The type of runner that the job will run on
-    runs-on: windows-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - name: Set up Python #安装python
-        uses: actions/setup-python@v2.2.1
-        with:
-          python-version: 3.9
-      - name: Install requirements #安装依赖
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pyinstaller
-      - name: Build EXE
-        run: |
-          pyinstaller -F youtubedl_vimeo.py -n vimeo_downloader
-      - name: Upload EXE
-        uses: actions/upload-artifact@v2.2.2
-        with:
-          name: vimeo_downloader_windows
-          path: dist/*
-  Build_linux:
-    # The type of runner that the job will run on
+  PyBuild_linux:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.5,3.6,3.7, 3.8, 3.9]
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - name: Set up Python #安装python
-        uses: actions/setup-python@v2.2.1
-        with:
-          python-version: 3.8
-      - name: Install requirements #安装依赖
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pyinstaller
-      - name: Build Executable File
-        run: |
-          pyinstaller -F youtubedl_vimeo.py -n vimeo_downloader
-      - name: Upload File
-        uses: actions/upload-artifact@v2.2.2
-        with:
-          name: vimeo_downloader_linux
-          path: dist/*
+    - name: Install GCC
+      # You may pin to the exact commit or the version.
+      # uses: egor-tensin/setup-gcc@d3a49b4d5a28659e27c27b6d24e7c728f9307874
+      uses: egor-tensin/setup-gcc@v1
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install cython
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Compile
+      run: |
+        python build.py build_ext --inplace
+        rm youtubedl_vimeo.py
+        rm *.c
+        rm -rf __pycache__
+        rm -rf .github
+        rm -rf .git
+        rm -rf build
+    - name: Upload Build
+      uses: actions/upload-artifact@v2.2.2
+      with:
+        name: vimeo_downloader_Linux_Python_${{ matrix.python-version }}
+        path: ./*
+
+  PyBuild_Windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: [3.5,3.6,3.7, 3.8, 3.9]
+
+    steps:
+    - name: Install MinGW
+      # You may pin to the exact commit or the version.
+      # uses: egor-tensin/setup-mingw@f3c5d799aadf8fa230ac67a422b01dd085bbc96b
+      uses: egor-tensin/setup-mingw@v2
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install cython
+        pip install -r requirements.txt
+    - name: Compile
+      run: |
+        python build.py build_ext --inplace
+    - name: Clean Up
+      run: |
+        rm youtubedl_vimeo.py
+        rm *.c
+    - name: Upload Build
+      uses: actions/upload-artifact@v2.2.2
+      with:
+        name: vimeo_downloader_Windows_Python_${{ matrix.python-version }}
+        path: |
+          ./*
+          !.github
+          !.git
+          !__pycache__
+          !build
 
