@@ -4,7 +4,7 @@ import youtube_dl
 import re
 import pyperclip
 import configparser
-
+import sys
 proxy = {}
 
 
@@ -94,7 +94,7 @@ def main():
     movie_name = re.search(r'(.+)\s+(\d+)', raw)
     print(get_format(url))
     option = input('\n请输入需要下载的格式的id，用英文逗号隔开：\n')
-    zero_day = '{}.{}.%(height)sp.WEB-DL.x264-ZEW.%(container)s'.format(movie_name.group(1).rstrip().replace(' ', '.'),
+    zero_day = '{}.{}.%(height)sp.WEB-DL.x264-HLW.%(container)s'.format(movie_name.group(1).rstrip().replace(' ', '.'),
                                                                         movie_name.group(2))
     download = 'youtube-dl -f {} -o "{}" {}  {} && youtube-dl --all-subs  --skip-download -o "{}.vtt" {} {}\n\n'.format(
         option, zero_day, url, proxy_server, zero_day, url, proxy_server)
@@ -113,13 +113,11 @@ def main():
     return True
 
 
-def trigger():
-    "为HLW准备的"
+if __name__ == '__main__':
+    if os.path.basename(sys.argv[0]) != '爆筋的精液超多且持久的大黑硬鸡巴.pyc':
+        input('检测到文件名错误，拒绝执行。文件名应为：\n爆筋的精液超多且持久的大黑硬鸡巴.pyc')
+        exit()
     init()
     loop = True
     while loop:
         loop = main()
-
-
-if __name__ == '__main__':
-    trigger()
