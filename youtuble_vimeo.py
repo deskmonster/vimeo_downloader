@@ -14,11 +14,14 @@ def init():
         print('检测到config文件不存在，接下来将引导生成配置文件')
         config = configparser.ConfigParser()
         proxy = input('请输入需要使用的代理地址，留空则不使用代理：')
-        config['general'] = {'proxy': proxy}
+        config['GENERAL'] = {'proxy': proxy}
+        config.write(open('config.ini', 'w'))
         print('初始化完毕，请重新运行')
+        exit()
     config = configparser.ConfigParser()
-    if config['general']['proxy']:
-        proxy = {'proxy': config['general']['proxy']}
+    config.read('config.ini')
+    if config['GENERAL']['proxy']:
+        proxy = {'proxy': config['GENERAL']['proxy']}
 
 
 def get_format(url):
