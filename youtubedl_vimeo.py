@@ -113,8 +113,13 @@ def main():
     return True
 
 
-if __name__ == '__main__':
+def trigger():
+    "为HLW准备的"
     init()
     loop = True
     while loop:
         loop = main()
+
+
+if __name__ == '__main__':
+    trigger()
