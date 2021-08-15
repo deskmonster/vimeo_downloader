@@ -6,15 +6,17 @@ import pyperclip
 import configparser
 
 proxy = {}
+group_name = ''
 
 
 def init():
-    global proxy
+    global proxy, group_name
     if 'config.ini' not in os.listdir():
         print('检测到config文件不存在，接下来将引导生成配置文件')
         config = configparser.ConfigParser()
         proxy = input('请输入需要使用的代理地址，留空则不使用代理：')
-        config['GENERAL'] = {'proxy': proxy}
+        group_name = input("请输入需要使用的组名：")
+        config['GENERAL'] = {'proxy': proxy, "group_name": group_name}
         config.write(open('config.ini', 'w'))
         print('初始化完毕，请重新运行')
         exit()
@@ -22,6 +24,7 @@ def init():
     config.read('config.ini')
     if config['GENERAL']['proxy']:
         proxy = {'proxy': config['GENERAL']['proxy']}
+        group_name = config['GENERAL']['group_name']
 
 
 def get_format(url):
@@ -94,8 +97,8 @@ def main():
     movie_name = re.search(r'(.+)\s+(\d+)', raw)
     print(get_format(url))
     option = input('\n请输入需要下载的格式的id，用英文逗号隔开：\n')
-    zero_day = '{}.{}.%(height)sp.WEB-DL.x264-ZEW.%(container)s'.format(movie_name.group(1).rstrip().replace(' ', '.'),
-                                                                        movie_name.group(2))
+    zero_day = '{}.{}.%(height)sp.WEB-DL.x264-{}.%(container)s'.format(movie_name.group(1).rstrip().replace(' ', '.'),
+                                                                        movie_name.group(2), group_name)
     download = 'youtube-dl -f {} -o "{}" {}  {} && youtube-dl --all-subs  --skip-download -o "{}.vtt" {} {}\n\n'.format(
         option, zero_day, url, proxy_server, zero_day, url, proxy_server)
     print(download)
